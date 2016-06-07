@@ -39,22 +39,22 @@ function expandDirectories(entries) {
   entries.forEach(function(entry) {
     if (entry.file && entry.path) {
       if (!isAbsolute(entry.file)) {
-        entry.file = path.join(cwd, entry.file);
+        entry.file = [cwd, entry.file].join('/');
       }
       files.push(entry);
     } else if (entry.dir && entry.prefix) {
       if (!isAbsolute(entry.dir)) {
-        entry.dir = path.join(cwd, entry.dir);
+        entry.dir = [cwd, entry.dir].join('/');
       }
       wrench.readdirSyncRecursive(entry.dir).forEach(function(name) {
-        var file = path.join(entry.dir, name);
+        var file = [entry.dir, name].join('/');
         if (fs.statSync(file).isFile() && (!entry.ignore || !entry.ignore(file))) {
           if (entry.replace) {
             name = entry.replace(name);
           }
           files.push({
             file: file,
-            path: entry.prefix + name
+            path: entry.prefix + name.replace('\\','/')
           });
         }
       });
